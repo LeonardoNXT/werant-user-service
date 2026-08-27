@@ -10,8 +10,6 @@ public record RegisterInputDto(
 		String email,
 		Optional<String> phoneNumber,
 		String password,
-		String role,
-		String status,
 		boolean emailVerified,
 		boolean numberVerified
 ) {

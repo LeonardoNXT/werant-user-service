@@ -35,7 +35,7 @@ public class RegisterUsecase implements Usecase<RegisterInputDto, RegisterOutput
 
 	public RegisterOutputDto execute(RegisterInputDto input) throws SystemException {
 
-		ValidatedInput validatedInput = this.validateInput(input.name(), input.username(), input.email(),input.phoneNumber(), input.password(), input.role());
+		ValidatedInput validatedInput = this.validateInput(input.name(), input.username(), input.email(),input.phoneNumber(), input.password());
 
 		User user = this.createUser(validatedInput, input.numberVerified(), input.emailVerified());
 
@@ -49,18 +49,17 @@ public class RegisterUsecase implements Usecase<RegisterInputDto, RegisterOutput
 
 		userCommandRepositoryPort.persist(user, outboxCreateOutput);
 
-		return new RegisterOutputDto(user.id().toString(), user.email().value(), user.role().value(), user.status().value());
+		return new RegisterOutputDto(user.id().toString(), user.email().value(), user.status().value());
 	}
 
-	private ValidatedInput validateInput(String inputName, String inputUsername, String inputEmail, Optional<String> inputPhoneNumber, String inputPassword, String inputRole) throws ValueObjectException {
+	private ValidatedInput validateInput(String inputName, String inputUsername, String inputEmail, Optional<String> inputPhoneNumber, String inputPassword) throws ValueObjectException {
 		try{
 			Name name = Name.create(inputName);
 			Username username = Username.create(inputUsername);
 			Email email = Email.create(inputEmail);
 			Password password = Password.create(inputPassword);
-			Role role = Role.create(inputRole == null || inputRole.isEmpty() ? "user" : inputRole);
 			PhoneNumber phoneNumber = inputPhoneNumber.isPresent() ? PhoneNumber.create(inputPhoneNumber.get()) : null;
-			return new ValidatedInput(name, username, email,phoneNumber, password, role);
+			return new ValidatedInput(name, username, email,phoneNumber, password);
 		} catch (ValueObjectException e){
 			throw e.at(RegisterUsecase.class.getSimpleName());
 		}
@@ -74,7 +73,7 @@ public class RegisterUsecase implements Usecase<RegisterInputDto, RegisterOutput
 
 		HashedPassword hashedPassword = this.passwordHasherPort.hash(validInput.password());
 
-		return User.create(userId, validInput.name(), validInput.username(), validInput.role(), validInput.email(),validInput.phoneNumber(), hashedPassword, null, emailVerified, numberVerified, date, date, eventId);
+		return User.create(userId, validInput.name(), validInput.username(), validInput.email(),validInput.phoneNumber(), hashedPassword, null, emailVerified, numberVerified, date, date, eventId);
 
 	}
 

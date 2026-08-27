@@ -1,4 +1,4 @@
-package dev.foundation.userservice.domain.ValueObjects;
+package dev.foundation.userservice.domain.valueObjects;
 
 import dev.foundation.userservice.domain.value_objects.Password;
 import dev.foundation.userservice.errors.ValueObjectException;

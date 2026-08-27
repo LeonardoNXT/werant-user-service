@@ -1,4 +1,4 @@
-package dev.foundation.userservice.domain.Usecases;
+package dev.foundation.userservice.domain.usecases;
 
 import dev.foundation.userservice.domain.entities.User;
 import dev.foundation.userservice.domain.events.*;
@@ -21,8 +21,7 @@ public class UserTest {
 		return User.create(
 				UUID.randomUUID(),
 				Name.create("Leonardo Silva"),
-				Username.create("leonardox"),
-				Role.create("user"),
+				Username.create("leonardo"),
 				Email.create("leo@email.com"),
 				PhoneNumber.create("21999999999"),
 				HashedPassword.create("$2a$10$hashedpassword"),
@@ -41,7 +40,6 @@ public class UserTest {
 				Name.create("Leonardo Silva"),
 				Username.create("leonardox"),
 				UserStatus.create("active"),
-				Role.create("user"),
 				Email.create("leo@email.com"),
 				PhoneNumber.create("21999999999"),
 				HashedPassword.create("$2a$10$hashedpassword"),
@@ -74,7 +72,6 @@ public class UserTest {
 
 		Name name = Name.create("Leonardo Silva");
 		Username username = Username.create("leonardox");
-		Role role = Role.create("user");
 		Email email = Email.create("leo@email.com");
 		PhoneNumber phoneNumber = PhoneNumber.create("21999999999");
 		HashedPassword password = HashedPassword.create("$2a$10$hashedpassword");
@@ -85,7 +82,6 @@ public class UserTest {
 				id,
 				name,
 				username,
-				role,
 				email,
 				phoneNumber,
 				password,
@@ -100,7 +96,6 @@ public class UserTest {
 		assertEquals(id, user.id());
 		assertEquals(name, user.name());
 		assertEquals(username, user.username());
-		assertEquals(role, user.role());
 		assertEquals(email, user.email());
 		assertEquals(phoneNumber, user.phoneNumber());
 		assertEquals(password, user.password());
@@ -121,7 +116,6 @@ public class UserTest {
 				userId,
 				Name.create("Leonardo Silva"),
 				Username.create("leonardox"),
-				Role.create("user"),
 				Email.create("leo@email.com"),
 				PhoneNumber.create("21999999999"),
 				HashedPassword.create("$2a$10$hashedpassword"),
@@ -135,7 +129,7 @@ public class UserTest {
 
 		assertEquals(1, user.allDomainEvents().size());
 
-		DomainEvent event = user.allDomainEvents().get(0);
+		DomainEvent event = user.allDomainEvents().getFirst();
 
 		assertInstanceOf(CreateUserEvent.class, event);
 		assertEquals(eventId, event.eventId());
@@ -160,7 +154,6 @@ public class UserTest {
 				Name.create("Leonardo Silva"),
 				Username.create("leonardox"),
 				UserStatus.create("banned"),
-				Role.create("user"),
 				Email.create("leo@email.com"),
 				PhoneNumber.create("21999999999"),
 				HashedPassword.create("$2a$10$hashedpassword"),
@@ -228,7 +221,6 @@ public class UserTest {
 		assertEquals(original.name(), updated.name());
 		assertEquals(original.username(), updated.username());
 		assertEquals(original.status(), updated.status());
-		assertEquals(original.role(), updated.role());
 		assertEquals(original.phoneNumber(), updated.phoneNumber());
 		assertEquals(original.password(), updated.password());
 		assertEquals(original.profilePictureId(), updated.profilePictureId());
@@ -250,7 +242,7 @@ public class UserTest {
 
 		assertEquals(1, updated.allDomainEvents().size());
 
-		DomainEvent event = updated.allDomainEvents().get(0);
+		DomainEvent event = updated.allDomainEvents().getFirst();
 
 		assertInstanceOf(ChangeEmailEvent.class, event);
 		assertEquals(eventId, event.eventId());
@@ -266,7 +258,7 @@ public class UserTest {
 	void shouldChangePhoneNumber() throws ValueObjectException {
 		User original = createUser();
 
-		PhoneNumber newPhoneNumber = PhoneNumber.create("21888888888");
+		PhoneNumber newPhoneNumber = PhoneNumber.create("21979818980");
 		Date date = Date.create(NEXT_UPDATE);
 
 		User updated = original.changePhoneNumber(
@@ -286,7 +278,7 @@ public class UserTest {
 		PhoneNumber originalPhoneNumber = original.phoneNumber();
 
 		User updated = original.changePhoneNumber(
-				PhoneNumber.create("21888888888"),
+				PhoneNumber.create("21979818980"),
 				UUID.randomUUID(),
 				Date.create(NEXT_UPDATE)
 		);
@@ -300,7 +292,7 @@ public class UserTest {
 		User original = createUser();
 
 		User updated = original.changePhoneNumber(
-				PhoneNumber.create("21888888888"),
+				PhoneNumber.create("21979818980"),
 				UUID.randomUUID(),
 				Date.create(NEXT_UPDATE)
 		);
@@ -309,7 +301,6 @@ public class UserTest {
 		assertEquals(original.name(), updated.name());
 		assertEquals(original.username(), updated.username());
 		assertEquals(original.status(), updated.status());
-		assertEquals(original.role(), updated.role());
 		assertEquals(original.email(), updated.email());
 		assertEquals(original.password(), updated.password());
 		assertEquals(original.profilePictureId(), updated.profilePictureId());
@@ -324,14 +315,14 @@ public class UserTest {
 		Date date = Date.create(NEXT_UPDATE);
 
 		User updated = createUser().changePhoneNumber(
-				PhoneNumber.create("21888888888"),
+				PhoneNumber.create("21979818980"),
 				eventId,
 				date
 		);
 
 		assertEquals(1, updated.allDomainEvents().size());
 
-		DomainEvent event = updated.allDomainEvents().get(0);
+		DomainEvent event = updated.allDomainEvents().getFirst();
 
 		assertInstanceOf(ChangePhoneNumberEvent.class, event);
 		assertEquals(eventId, event.eventId());
@@ -385,7 +376,7 @@ public class UserTest {
 
 		assertEquals(1, updated.allDomainEvents().size());
 
-		DomainEvent event = updated.allDomainEvents().get(0);
+		DomainEvent event = updated.allDomainEvents().getFirst();
 
 		assertInstanceOf(ChangePasswordEvent.class, event);
 		assertEquals(eventId, event.eventId());
@@ -439,69 +430,11 @@ public class UserTest {
 
 		assertEquals(1, updated.allDomainEvents().size());
 
-		DomainEvent event = updated.allDomainEvents().get(0);
+		DomainEvent event = updated.allDomainEvents().getFirst();
 
 		assertInstanceOf(ChangeUsernameEvent.class, event);
 		assertEquals(eventId, event.eventId());
 		assertEquals(updated.id(), event.aggregateId());
-		assertEquals(date, event.occurredAt());
-	}
-
-	@Test
-	void shouldChangeRole() throws ValueObjectException {
-		User original = createUser();
-
-		Role newRole = Role.create("admin");
-		Date date = Date.create(NEXT_UPDATE);
-
-		User updated = original.changeRole(
-				newRole,
-				"Promotion",
-				UUID.randomUUID(),
-				date
-		);
-
-		assertEquals(newRole, updated.role());
-		assertEquals(date, updated.updatedAt());
-	}
-
-	@Test
-	void shouldNotMutateOriginalUserWhenChangingRole() throws ValueObjectException {
-		User original = createUser();
-
-		Role originalRole = original.role();
-
-		User updated = original.changeRole(
-				Role.create("admin"),
-				"Promotion",
-				UUID.randomUUID(),
-				Date.create(NEXT_UPDATE)
-		);
-
-		assertEquals(originalRole, original.role());
-		assertNotEquals(original.role(), updated.role());
-	}
-
-	@Test
-	void shouldCreateChangeRoleDomainEvent() throws ValueObjectException {
-		UUID eventId = UUID.randomUUID();
-		Date date = Date.create(NEXT_UPDATE);
-
-		User updated = createUser().changeRole(
-				Role.create("admin"),
-				"Promotion",
-				eventId,
-				date
-		);
-
-		assertEquals(1, updated.allDomainEvents().size());
-
-		DomainEvent event = updated.allDomainEvents().get(0);
-
-		assertInstanceOf(ChangeRoleEvent.class, event);
-		assertEquals(eventId, event.eventId());
-		assertEquals(updated.id(), event.aggregateId());
-		assertEquals("Promotion", event.reason());
 		assertEquals(date, event.occurredAt());
 	}
 
@@ -548,12 +481,11 @@ public class UserTest {
 
 		assertEquals(1, banned.allDomainEvents().size());
 
-		DomainEvent event = banned.allDomainEvents().get(0);
+		DomainEvent event = banned.allDomainEvents().getFirst();
 
 		assertInstanceOf(BanUserEvent.class, event);
 		assertEquals(eventId, event.eventId());
 		assertEquals(banned.id(), event.aggregateId());
-		assertEquals("Violation of terms", event.occurredAt());
 	}
 
 	@Test
@@ -599,7 +531,7 @@ public class UserTest {
 
 		assertEquals(1, suspended.allDomainEvents().size());
 
-		DomainEvent event = suspended.allDomainEvents().get(0);
+		DomainEvent event = suspended.allDomainEvents().getFirst();
 
 		assertInstanceOf(SuspendUserEvent.class, event);
 		assertEquals(eventId, event.eventId());
@@ -658,7 +590,7 @@ public class UserTest {
 
 		assertEquals(1, activated.allDomainEvents().size());
 
-		DomainEvent event = activated.allDomainEvents().get(0);
+		DomainEvent event = activated.allDomainEvents().getFirst();
 
 		assertInstanceOf(ActivateUserEvent.class, event);
 		assertEquals(eventId, event.eventId());
@@ -710,7 +642,7 @@ public class UserTest {
 
 		assertEquals(1, deactivated.allDomainEvents().size());
 
-		DomainEvent event = deactivated.allDomainEvents().get(0);
+		DomainEvent event = deactivated.allDomainEvents().getFirst();
 
 		assertInstanceOf(DeactivateUserEvent.class, event);
 		assertEquals(eventId, event.eventId());
@@ -730,9 +662,8 @@ public class UserTest {
 				Name.create("Another Name"),
 				Username.create("anotherx"),
 				UserStatus.create("banned"),
-				Role.create("admin"),
 				Email.create("second@email.com"),
-				PhoneNumber.create("21888888888"),
+				PhoneNumber.create("21 97981-8980"),
 				HashedPassword.create("another-hash"),
 				null,
 				true,
@@ -763,14 +694,14 @@ public class UserTest {
 	void shouldNotConsiderNullEquals() throws ValueObjectException {
 		User user = createUser();
 
-		assertNotEquals(user, null);
+		assertNotEquals(null, user);
 	}
 
 	@Test
 	void shouldNotConsiderDifferentTypeEquals() throws ValueObjectException {
 		User user = createUser();
 
-		assertNotEquals(user, "user");
+		assertNotEquals("user", user);
 	}
 
 	@Test
@@ -784,9 +715,8 @@ public class UserTest {
 				Name.create("Another Name"),
 				Username.create("anotherx"),
 				UserStatus.create("banned"),
-				Role.create("admin"),
 				Email.create("second@email.com"),
-				PhoneNumber.create("21888888888"),
+				PhoneNumber.create("21 979818980"),
 				HashedPassword.create("another-hash"),
 				null,
 				true,
@@ -839,25 +769,11 @@ public class UserTest {
 	}
 
 	@Test
-	void shouldPreserveUserIdWhenChangingRole() throws ValueObjectException {
-		User original = createUser();
-
-		User updated = original.changeRole(
-				Role.create("admin"),
-				"Promotion",
-				UUID.randomUUID(),
-				Date.create(NEXT_UPDATE)
-		);
-
-		assertEquals(original.id(), updated.id());
-	}
-
-	@Test
 	void shouldPreserveUserIdWhenChangingPhoneNumber() throws ValueObjectException {
 		User original = createUser();
 
 		User updated = original.changePhoneNumber(
-				PhoneNumber.create("21888888888"),
+				PhoneNumber.create("21979818980"),
 				UUID.randomUUID(),
 				Date.create(NEXT_UPDATE)
 		);

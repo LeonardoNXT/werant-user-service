@@ -10,7 +10,7 @@ import java.time.Instant;
 import java.util.UUID;
 
 @Entity
-@Table(name = "user")
+@Table(name = "users")
 @Getter
 @Builder
 @NoArgsConstructor
@@ -36,9 +36,6 @@ public class UserEntity {
 
     @Column(name = "status", nullable = false)
     private String status;
-
-    @Column(name = "role", nullable = false)
-    private String role;
 
     @Column(name = "email_verified", nullable = false)
     private boolean emailVerified;

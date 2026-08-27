@@ -1,6 +1,6 @@
-package dev.foundation.userservice.domain.ValueObjects;
+package dev.foundation.userservice.domain.valueObjects;
 
-import dev.foundation.userservice.domain.value_objects.Name;
+import dev.foundation.userservice.domain.value_objects.Username;
 import dev.foundation.userservice.errors.ValueObjectException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -8,19 +8,19 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class NameTest {
+public class UsernameTest {
 	@Test
-	void shouldConsiderNameWithSameValueEquals() throws ValueObjectException {
-		Name first = Name.create("Leonardo Leal");
-		Name second = Name.create("Leonardo Leal");
+	void shouldConsiderUsernameWithSameValueEquals() throws ValueObjectException {
+		Username first = Username.create("NXT Y YTNIF");
+		Username second = Username.create("NXT Y YTNIF");
 
 		assertEquals(first, second);
 	}
 
 	@Test
-	void shouldConsiderNameWithDifferentValueEquals() throws ValueObjectException {
-		Name first = Name.create("Leonardo Leal");
-		Name second = Name.create("Giovanni Alencar");
+	void shouldConsiderUsernameWithDifferentValueEquals() throws ValueObjectException {
+		Username first = Username.create("NXT Y YTNIF");
+		Username second = Username.create("nxt y ytnif");
 
 		assertNotEquals(first, second);
 	}
@@ -41,9 +41,9 @@ public class NameTest {
 			"Leonardo-",
 			"Leonardo  Leal"
 	})
-	void shouldConsiderInvalidUsernames(String name){
+	void shouldConsiderInvalidUsernames(String username){
 		assertThrows(ValueObjectException.class, () -> {
-			Name.create(name);
+			Username.create(username);
 		});
 	}
 }

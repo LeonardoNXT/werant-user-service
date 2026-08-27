@@ -9,7 +9,6 @@ public record ValidatedInput(
         Username username,
         Email email,
 		PhoneNumber phoneNumber,
-        Password password,
-        Role role
+        Password password
 ) {
 }

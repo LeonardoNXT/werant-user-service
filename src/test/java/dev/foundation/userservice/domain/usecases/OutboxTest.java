@@ -1,4 +1,4 @@
-package dev.foundation.userservice.domain.Usecases;
+package dev.foundation.userservice.domain.usecases;
 
 import dev.foundation.userservice.domain.entities.Outbox;
 import dev.foundation.userservice.domain.events.CreateUserEvent;
