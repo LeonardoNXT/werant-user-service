@@ -28,7 +28,7 @@ public class UserEntity {
     @Column(name = "email", nullable = false, unique = true, length = 150)
     private String email;
 
-	@Column(name = "phone_number", nullable = true, unique = true, length = 150)
+	@Column(name = "phone_number", unique = true, length = 150)
 	private String phoneNumber;
 
     @Column(name = "password", nullable = false)
@@ -43,7 +43,7 @@ public class UserEntity {
     @Column(name = "number_verified", nullable = false)
     private boolean numberVerified;
 
-    @Column(name = "profile_picture_id", nullable = true, unique = true)
+    @Column(name = "profile_picture_id", unique = true)
     private UUID profilePictureId;
 
     @Column(name = "created_at", nullable = false)

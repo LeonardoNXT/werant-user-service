@@ -2,7 +2,6 @@ package dev.foundation.userservice.infrastructure.packages;
 
 import dev.foundation.userservice.application.ports.ClockPort;
 import dev.foundation.userservice.domain.value_objects.Date;
-import dev.foundation.userservice.errors.SystemException;
 import dev.foundation.userservice.errors.ValueObjectException;
 
 import java.time.Instant;
