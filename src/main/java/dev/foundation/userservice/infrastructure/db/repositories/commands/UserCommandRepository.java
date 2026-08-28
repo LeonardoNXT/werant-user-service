@@ -13,6 +13,7 @@ import dev.foundation.userservice.infrastructure.db.mappers.UserMapper;
 import dev.foundation.userservice.infrastructure.db.repositories.Repository;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityManager;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -31,7 +32,7 @@ public class UserCommandRepository
 	}
 
 	@Override
-	@Transactional
+	@Transactional(rollbackFor = InfrastructureException.class)
 	public void persist(
 			User user,
 			List<Outbox> outboxes
@@ -48,7 +49,20 @@ public class UserCommandRepository
 
 			outboxEntities.forEach(entityManager::persist);
 
-		} catch (EntityExistsException e) {
+			entityManager.flush();
+
+		}
+		catch (ConstraintViolationException e){
+
+			throw new InfrastructureException(
+					"The email is already in use",
+					e.getClass().getSimpleName(),
+					"CONFLICT",
+					ExceptionType.CONFLICT
+			);
+
+		}
+		catch (EntityExistsException e) {
 
 			throw new InfrastructureException(
 					e.getMessage(),
@@ -56,22 +70,23 @@ public class UserCommandRepository
 					"User already exists",
 					ExceptionType.CONFLICT
 			);
-
-		} catch (IllegalArgumentException e) {
+		}
+		catch (IllegalArgumentException e) {
 
 			throw new InfrastructureException(
 					e.getMessage(),
 					UserCommandRepository.class.getSimpleName(),
-					"Invalid argument",
+					"INVALID ARGUMENT",
 					ExceptionType.INVALID_ARGUMENT
 			);
 
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 
 			throw new InfrastructureException(
 					e.getMessage(),
-					UserCommandRepository.class.getSimpleName(),
-					"UNKNOWN",
+					e.getClass().getSimpleName(),
+					"dsadsa",
 					ExceptionType.INTERNAL_SERVER_ERROR
 			);
 		}
@@ -116,7 +131,6 @@ public class UserCommandRepository
 			);
 
 		} catch (ValueObjectException e) {
-
 			throw e;
 
 		} catch (Exception e) {

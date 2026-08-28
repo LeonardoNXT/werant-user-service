@@ -27,7 +27,7 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<RecordExceptionMessage> handleException(Exception e){
-		return exception(500, e.getMessage(), "UNKNOWN", "UNKNOWN");
+		return exception(500, e.getMessage(), e.getClass().getSimpleName(), "UNKNOWN");
 	}
 
 	private ResponseEntity<RecordExceptionMessage> exception(int code, String message, String locale, String violation){

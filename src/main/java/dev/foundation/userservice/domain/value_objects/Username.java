@@ -17,8 +17,8 @@ public class Username {
 
 		String trimmedUsername = username.trim();
 
-		if(trimmedUsername.length() < 8 || trimmedUsername.length() > 20){
-			throw new ValueObjectException("The username typed is invalid. Try again with more than 8 characters do proceed.", Username.class.getSimpleName(), "Invalid Argument");
+		if(trimmedUsername.length() < 3 || trimmedUsername.length() > 20){
+			throw new ValueObjectException("The username typed is invalid. Try again with more than 3 characters do proceed.", Username.class.getSimpleName(), "Invalid Argument");
 		}
 
         if(!UsernamePattern.PATTERN.matcher(trimmedUsername).matches()){

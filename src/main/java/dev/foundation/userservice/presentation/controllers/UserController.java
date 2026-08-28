@@ -25,6 +25,7 @@ public class UserController {
 	public ResponseEntity<RegisterOutputDto> createUser(@RequestBody RequestRegisterUserDto requestRegisterUserDto) throws SystemException {
 		RegisterInputDto input = new RegisterInputDto(requestRegisterUserDto.name(),requestRegisterUserDto.username(),requestRegisterUserDto.email(), Optional.ofNullable(requestRegisterUserDto.phoneNumber()), requestRegisterUserDto.password(), false,false);
 		RegisterOutputDto registerOutputDto = this.registerUsecase.execute(input);
+
 		return ResponseEntity.status(HttpStatus.CREATED).body(registerOutputDto);
 	}
 }
