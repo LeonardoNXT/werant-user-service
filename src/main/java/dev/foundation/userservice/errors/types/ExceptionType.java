@@ -9,5 +9,6 @@ public record ExceptionType() {
     public static final int CONFLICT = 409;
     public static final int UNPROCESSABLE_ENTITY = 422;
     public static final int INTERNAL_SERVER_ERROR = 500;
+	public static final int TIME_OUT_ERROR = 504;
 }
 
