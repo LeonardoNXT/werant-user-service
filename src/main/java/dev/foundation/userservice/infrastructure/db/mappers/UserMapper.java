@@ -7,7 +7,20 @@ import dev.foundation.userservice.infrastructure.db.entities.UserEntity;
 
 public class UserMapper {
    public static UserEntity toOrm(User user){
-        return UserEntity.builder().id(user.id()).name(user.name().value()).username(user.username().value()).email(user.email().value()).phoneNumber(user.phoneNumber().value()).password(user.password().value()).status(user.status().value()).emailVerified(user.emailVerified()).numberVerified(user.numberVerified()).profilePictureId(user.profilePictureId()).createdAt(user.createdAt().value()).updatedAt(user.updatedAt().value()).build();
+		return UserEntity.builder()
+				.id(user.id())
+				.name(user.name().value())
+				.username(user.username().value())
+				.email(user.email().value())
+				.phoneNumber(user.phoneNumber() != null ? user.phoneNumber().value() : null)
+				.password(user.password().value())
+				.status(user.status().value())
+				.emailVerified(user.emailVerified())
+				.numberVerified(user.numberVerified())
+				.profilePictureId(user.profilePictureId())
+				.createdAt(user.createdAt().value())
+				.updatedAt(user.updatedAt().value())
+				.build();
    }
 
    public static User toDomain(UserEntity entity) throws ValueObjectException {
