@@ -1,0 +1,5 @@
+ALTER TABLE outbox
+    ADD COLUMN payload JSONB NOT NULL DEFAULT '{}'::jsonb;
+
+ALTER TABLE outbox
+    ALTER COLUMN payload DROP DEFAULT;

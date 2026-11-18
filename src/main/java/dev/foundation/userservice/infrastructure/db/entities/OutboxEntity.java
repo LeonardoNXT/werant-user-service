@@ -32,8 +32,11 @@ public class OutboxEntity {
     @Column(name = "aggregate_type", nullable = false)
     private String aggregateType;
 
-    @Column(name = "reason", nullable = true)
+    @Column(name = "reason")
     private String reason;
+
+	@Column(name = "payload", columnDefinition = "jsonb", nullable = false)
+	private String payload;
 
     @Column(name="occurred_at", nullable = false)
     private Instant occurredAt;
