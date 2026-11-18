@@ -1,4 +1,4 @@
-package dev.foundation.userservice.application.usecases.register;
+package dev.foundation.userservice.application.usecases.user.register;
 import java.util.Optional;
 
 public record RegisterInputDto(

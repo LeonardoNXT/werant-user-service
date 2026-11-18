@@ -1,9 +1,9 @@
-package dev.foundation.userservice.application.usecases.register;
+package dev.foundation.userservice.application.usecases.user.register;
 
 import dev.foundation.userservice.application.ports.*;
 import dev.foundation.userservice.application.services.OutboxCreate.OutboxCreateService;
 import dev.foundation.userservice.application.usecases.Usecase;
-import dev.foundation.userservice.application.usecases.register.helpers.ValidatedInput;
+import dev.foundation.userservice.application.usecases.user.register.helpers.ValidatedInput;
 import dev.foundation.userservice.domain.entities.Outbox;
 import dev.foundation.userservice.domain.entities.User;
 import dev.foundation.userservice.domain.value_objects.*;

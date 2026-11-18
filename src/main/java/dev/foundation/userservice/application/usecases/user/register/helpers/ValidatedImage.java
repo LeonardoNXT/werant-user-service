@@ -1,4 +1,4 @@
-package dev.foundation.userservice.application.usecases.register.helpers;
+package dev.foundation.userservice.application.usecases.user.register.helpers;
 
 import dev.foundation.userservice.domain.value_objects.ProfilePictureHeight;
 import dev.foundation.userservice.domain.value_objects.ProfilePictureKey;

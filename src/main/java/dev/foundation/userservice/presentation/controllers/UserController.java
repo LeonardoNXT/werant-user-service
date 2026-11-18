@@ -1,12 +1,14 @@
 package dev.foundation.userservice.presentation.controllers;
 
-import dev.foundation.userservice.application.usecases.register.RegisterInputDto;
-import dev.foundation.userservice.application.usecases.register.RegisterOutputDto;
-import dev.foundation.userservice.application.usecases.register.RegisterUsecase;
+import dev.foundation.userservice.application.usecases.user.register.RegisterInputDto;
+import dev.foundation.userservice.application.usecases.user.register.RegisterOutputDto;
+import dev.foundation.userservice.application.usecases.user.register.RegisterUsecase;
 import dev.foundation.userservice.errors.SystemException;
 import dev.foundation.userservice.presentation.dtos.RequestRegisterUserDto;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,8 +23,8 @@ import java.util.Optional;
 public class UserController {
 	private final RegisterUsecase registerUsecase;
 
-	@PostMapping()
-	public ResponseEntity<RegisterOutputDto> createUser(@RequestBody RequestRegisterUserDto requestRegisterUserDto) throws SystemException {
+	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<RegisterOutputDto> createUser(@Valid @RequestBody RequestRegisterUserDto requestRegisterUserDto) throws SystemException {
 		RegisterInputDto input = new RegisterInputDto(requestRegisterUserDto.name(),requestRegisterUserDto.username(),requestRegisterUserDto.email(), Optional.ofNullable(requestRegisterUserDto.phoneNumber()), requestRegisterUserDto.password(), false,false);
 		RegisterOutputDto registerOutputDto = this.registerUsecase.execute(input);
 

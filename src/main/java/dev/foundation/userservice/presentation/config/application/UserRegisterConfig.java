@@ -4,7 +4,7 @@ import dev.foundation.userservice.application.ports.ClockPort;
 import dev.foundation.userservice.application.ports.IdGeneratorPort;
 import dev.foundation.userservice.application.ports.PasswordHasherPort;
 import dev.foundation.userservice.application.ports.UserCommandRepositoryPort;
-import dev.foundation.userservice.application.usecases.register.RegisterUsecase;
+import dev.foundation.userservice.application.usecases.user.register.RegisterUsecase;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
