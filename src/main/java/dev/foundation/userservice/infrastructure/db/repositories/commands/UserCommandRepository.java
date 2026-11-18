@@ -86,7 +86,7 @@ public class UserCommandRepository
 			throw new InfrastructureException(
 					e.getMessage(),
 					e.getClass().getSimpleName(),
-					"dsadsa",
+					"UNKNOWN",
 					ExceptionType.INTERNAL_SERVER_ERROR
 			);
 		}

@@ -12,7 +12,6 @@ public class Clock implements ClockPort {
 	public Date nowIso8601() throws ValueObjectException {
 		try{
 			String instant = Instant.now().truncatedTo(ChronoUnit.SECONDS).toString();
-			System.out.print(instant);
 			return Date.create(instant);
 		} catch (ValueObjectException e){
 			throw e.at(Clock.class.getSimpleName());
