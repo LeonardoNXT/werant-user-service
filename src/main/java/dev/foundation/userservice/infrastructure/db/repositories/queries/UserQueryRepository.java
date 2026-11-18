@@ -1,13 +1,15 @@
 package dev.foundation.userservice.infrastructure.db.repositories.queries;
 
 import dev.foundation.userservice.application.ports.UserQueryRepositoryPort;
-import dev.foundation.userservice.domain.entities.User;
+import dev.foundation.userservice.application.usecases.user.findByEmail.helpers.UserAndProfilePictureKey;
+import dev.foundation.userservice.domain.value_objects.Email;
 import dev.foundation.userservice.errors.InfrastructureException;
 import dev.foundation.userservice.errors.SystemException;
 import dev.foundation.userservice.errors.ValueObjectException;
 import dev.foundation.userservice.errors.types.ExceptionType;
 import dev.foundation.userservice.infrastructure.db.entities.UserEntity;
 import dev.foundation.userservice.infrastructure.db.mappers.UserMapper;
+import dev.foundation.userservice.infrastructure.db.projections.UserAndProfilePictureKeyProjection;
 import dev.foundation.userservice.infrastructure.db.repositories.Repository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceException;
@@ -29,24 +31,25 @@ public class UserQueryRepository
 	}
 
 
-	public User findById(UUID id)
+	public UserAndProfilePictureKey findById(UUID id)
 			throws InfrastructureException, ValueObjectException {
 
 		try {
-
-			UserEntity userEntity = entityManager
+			UserAndProfilePictureKeyProjection entity = entityManager
 					.createQuery(
 							"""
-							SELECT u
+							SELECT new dev.foundation.userservice.infrastructure.db.projections.UserAndProfilePictureKeyProjection(u, pp.key)
 							FROM UserEntity u
+							LEFT JOIN ProfilePictureEntity pp
+							ON pp.id = u.profilePictureId
 							WHERE u.id = :id
 							""",
-							UserEntity.class
+							UserAndProfilePictureKeyProjection.class
 					)
 					.setParameter("id", id)
 					.getSingleResultOrNull();
 
-			if (userEntity == null) {
+			if (entity == null) {
 				throw exception(
 						"User not found",
 						"User not found",
@@ -54,7 +57,7 @@ public class UserQueryRepository
 				);
 			}
 
-			return UserMapper.toDomain(userEntity);
+			return this.atType(entity.userEntity(), entity.key());
 
 		} catch (InfrastructureException | ValueObjectException e) {
 
@@ -79,19 +82,35 @@ public class UserQueryRepository
 	}
 
 	@Override
-	public User findByEmail(String email) throws SystemException {
+	public UserAndProfilePictureKey findByEmail(Email email) throws SystemException {
+		String parsedEmail = email.value();
 		try{
-			UserEntity entity = this.entityManager.createQuery(
+			UserAndProfilePictureKeyProjection entity = this.entityManager.createQuery(
 							"""
-									SELECT u
+									SELECT new dev.foundation.userservice.infrastructure.db.projections.UserAndProfilePictureKeyProjection(u, pp.key)
 									FROM UserEntity u
+									LEFT JOIN ProfilePictureEntity pp
+									ON pp.id = u.profilePictureId
 									WHERE u.email = :email
-									""",UserEntity.class)
-					.setParameter("email", email)
+									""",UserAndProfilePictureKeyProjection.class)
+					.setParameter("email", parsedEmail)
 					.getSingleResultOrNull();
 
-			return UserMapper.toDomain(entity);
+			if(entity == null){
+				throw exception(
+						"User not found",
+						"User not found",
+						ExceptionType.NOT_FOUND
+				);
+			}
+
+			return this.atType(entity.userEntity(), entity.key());
 		}
+
+		catch (InfrastructureException e){
+			throw e;
+		}
+
 		catch (IllegalArgumentException e){
 			throw exception(
 					"This is not a valid query.",
@@ -99,6 +118,7 @@ public class UserQueryRepository
 					ExceptionType.INVALID_ARGUMENT
 			);
 		}
+
 		catch (QueryTimeoutException e){
 			throw exception(
 					"Query timeout",
@@ -106,6 +126,7 @@ public class UserQueryRepository
 					ExceptionType.TIME_OUT_ERROR
 			);
 		}
+
 		catch (PersistenceException e){
 			throw exception(
 					"There was an error as the query running.",
@@ -113,6 +134,7 @@ public class UserQueryRepository
 					ExceptionType.INTERNAL_SERVER_ERROR
 			);
 		}
+
 		catch (Exception e) {
 
 			throw exception(
@@ -124,26 +146,29 @@ public class UserQueryRepository
 	}
 
 	@Override
-	public List<User> findAll(int pageStart, int pageLimit) throws SystemException {
+	public List<UserAndProfilePictureKey> findAll(int pageStart, int pageLimit) throws SystemException {
 		try{
-			List<UserEntity> entities = this.entityManager
+			List<UserAndProfilePictureKeyProjection> entities = this.entityManager
 					.createQuery("""
-						SELECT u
+						SELECT new dev.foundation.userservice.infrastructure.db.projections.UserAndProfilePictureKeyProjection(u, pp.key)
 						FROM UserEntity u
-						ORDER BY u.created_at DESC
-						""", UserEntity.class)
+						LEFT JOIN ProfilePictureEntity pp
+						ON pp.id = u.profilePictureId
+						""", UserAndProfilePictureKeyProjection.class)
 					.setFirstResult(pageStart)
 					.setMaxResults(pageLimit)
 					.getResultList();
 
-			List<User> list = new ArrayList<>();
+			List<UserAndProfilePictureKey> list = new ArrayList<>();
 
-			for (UserEntity entity : entities) {
-				User domain = UserMapper.toDomain(entity);
-				list.add(domain);
+			for (UserAndProfilePictureKeyProjection entity : entities) {
+				list.add(this.atType(entity.userEntity(),entity.key()));
 			}
 
 			return list;
+		}
+		catch (ValueObjectException e){
+			throw e;
 		}
 		catch (IllegalArgumentException e){
 			throw exception(
@@ -173,6 +198,10 @@ public class UserQueryRepository
 					ExceptionType.INTERNAL_SERVER_ERROR
 			);
 		}
+	}
+
+	private UserAndProfilePictureKey atType(UserEntity userEntity, String key) throws ValueObjectException{
+		return new UserAndProfilePictureKey(UserMapper.toDomain(userEntity), key);
 	}
 
 	private InfrastructureException exception(
@@ -187,6 +216,4 @@ public class UserQueryRepository
 				code
 		);
 	}
-
-
 }
