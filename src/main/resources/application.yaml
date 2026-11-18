@@ -1,8 +1,39 @@
 spring:
+  threads:
+    virtual:
+      enabled: true
   docker:
     compose:
       enabled: false
   datasource:
-    url: jdbc:postgresql://${DB_HOST:192.168.1.2}:${DB_PORT:5432}/${DB_NAME:user-service}
-    username: ${DB_USER:@foundation_db}
-    password: ${DB_PASSWORD:@foundation_db_0001}
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:user_service}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+  jackson:
+    deserialization:
+      fail-on-unknown-properties: true
+
+server:
+  error:
+    include-binding-errors: never
+    include-exception: false
+    include-message: never
+    include-stacktrace: never
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: never
+
+foundation:
+  storage:
+    minio:
+      enabled: ${MINIO_ENABLED:false}
+      endpoint: ${MINIO_ENDPOINT:http://localhost:9000}
+      access-key: ${MINIO_ACCESS_KEY:}
+      secret-key: ${MINIO_SECRET_KEY:}
+      bucket: ${MINIO_BUCKET:user-service}
