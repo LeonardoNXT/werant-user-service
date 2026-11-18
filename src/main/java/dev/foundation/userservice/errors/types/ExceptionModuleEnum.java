@@ -4,6 +4,7 @@ public enum ExceptionModuleEnum {
     VALUE_OBJECT,
     APPLICATION,
     INFRASTRUCTURE,
+	PRESENTATION,
     DOMAIN,
     DATABASE,
 }
