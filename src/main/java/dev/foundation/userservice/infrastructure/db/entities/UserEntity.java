@@ -29,7 +29,7 @@ public class UserEntity {
     private String email;
 
 	@Column(name = "version", nullable = false)
-	private Integer number;
+	private Integer version;
 
 	@Column(name = "phone_number", unique = true, length = 150)
 	private String phoneNumber;
