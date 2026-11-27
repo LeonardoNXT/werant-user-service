@@ -12,6 +12,7 @@ public class User extends AggregateRoot
     private final Name name;
     private final Username username;
     private final UserStatus status;
+	private final UserVersion version;
     private final Email email;
 	private final PhoneNumber phoneNumber;
     private final HashedPassword password;
@@ -21,12 +22,13 @@ public class User extends AggregateRoot
     private final Date createdAt;
     private final Date updatedAt;
 
-    private User(UUID id, Name name, Username username, Email email,PhoneNumber phoneNumber, UserStatus status, HashedPassword password, UUID profilePictureId, boolean emailVerified, boolean numberVerified, Date createdAt, Date updatedAt){
+    private User(UUID id, Name name, Username username, Email email,UserVersion version,PhoneNumber phoneNumber, UserStatus status, HashedPassword password, UUID profilePictureId, boolean emailVerified, boolean numberVerified, Date createdAt, Date updatedAt){
             super();
             this.id = id;
             this.email = email;
 			this.phoneNumber = phoneNumber;
             this.status = status;
+			this.version = version;
             this.name = name;
             this.username = username;
             this.password = password;
@@ -38,59 +40,59 @@ public class User extends AggregateRoot
     }
 
     public static User create(UUID id, Name name,Username username, Email email,PhoneNumber phoneNumber, HashedPassword password, UUID profilePictureId, boolean emailVerified, boolean numberVerified, Date createdAt, Date updatedAt, UUID eventId) throws ValueObjectException {
-        User user = new User(id,name,username,email,phoneNumber, UserStatus.create("active"), password, profilePictureId, emailVerified, numberVerified, createdAt, updatedAt);
+        User user = new User(id,name,username,email,UserVersion.create(0),phoneNumber, UserStatus.create("active"), password, profilePictureId, emailVerified, numberVerified, createdAt, updatedAt);
         user.addDomainEvents(CreateUserEvent.create(eventId,user.id(),createdAt));
         return user;
     }
 
-    public static User restore(UUID id, Name name, Username username, UserStatus userStatus, Email email,PhoneNumber phoneNumber, HashedPassword password, UUID profilePictureId, boolean emailVerified, boolean numberVerified, Date createdAt, Date updatedAt){
-        return new User(id,name,username,email,phoneNumber, userStatus, password, profilePictureId, emailVerified, numberVerified, createdAt, updatedAt);
+    public static User restore(UUID id, Name name, Username username, UserStatus userStatus, Email email, UserVersion version,PhoneNumber phoneNumber, HashedPassword password, UUID profilePictureId, boolean emailVerified, boolean numberVerified, Date createdAt, Date updatedAt){
+        return new User(id,name,username,email, version,phoneNumber, userStatus, password, profilePictureId, emailVerified, numberVerified, createdAt, updatedAt);
     }
 
     public User changeEmail(Email email,UUID eventId, Date date){
-        User user = new User(this.id, this.name,this.username, email,this.phoneNumber, this.status, this.password, this.profilePictureId, this.emailVerified, this.numberVerified, this.createdAt, date);
+        User user = new User(this.id, this.name,this.username, email,this.version,this.phoneNumber, this.status, this.password, this.profilePictureId, this.emailVerified, this.numberVerified, this.createdAt, date);
         user.addDomainEvents(ChangeEmailEvent.create(eventId, user.id(),date));
         return user;
     }
 
 	public User changePhoneNumber(PhoneNumber phoneNumber,UUID eventId, Date date){
-		User user = new User(this.id, this.name,this.username, this.email, phoneNumber, this.status, this.password, this.profilePictureId, this.emailVerified, this.numberVerified, this.createdAt, date);
+		User user = new User(this.id, this.name,this.username, this.email,this.version, phoneNumber, this.status, this.password, this.profilePictureId, this.emailVerified, this.numberVerified, this.createdAt, date);
 		user.addDomainEvents(ChangePhoneNumberEvent.create(eventId, user.id(),date));
 		return user;
 	}
 
     public User changePassword(HashedPassword password, UUID eventId, Date date){
-        User user = new User(this.id, this.name,this.username, this.email,this.phoneNumber, this.status, password, this.profilePictureId, this.emailVerified, this.numberVerified, this.createdAt, date);
+        User user = new User(this.id, this.name,this.username, this.email,this.version,this.phoneNumber, this.status, password, this.profilePictureId, this.emailVerified, this.numberVerified, this.createdAt, date);
         user.addDomainEvents(ChangePasswordEvent.create(eventId, user.id(), date));
         return user;
     }
 
     public User changeUsername(Username username,UUID eventId, Date date){
-        User user = new User(this.id, this.name,username, this.email,this.phoneNumber, this.status, this.password, this.profilePictureId, this.emailVerified, this.numberVerified, this.createdAt, date);
+        User user = new User(this.id, this.name,username, this.email,this.version,this.phoneNumber, this.status, this.password, this.profilePictureId, this.emailVerified, this.numberVerified, this.createdAt, date);
         user.addDomainEvents(ChangeUsernameEvent.create(eventId, user.id(), date));
         return user;
     }
 
     public User ban(String reason,UUID eventId, Date date) throws ValueObjectException {
-        User user = new User(this.id, this.name,this.username, this.email,this.phoneNumber, UserStatus.create("banned"), this.password, this.profilePictureId, emailVerified, numberVerified, createdAt, date);
+        User user = new User(this.id, this.name,this.username, this.email,this.version,this.phoneNumber, UserStatus.create("banned"), this.password, this.profilePictureId, emailVerified, numberVerified, createdAt, date);
         user.addDomainEvents(BanUserEvent.create(eventId,reason,user.id(),date));
         return user;
     }
 
     public User suspend(String reason,UUID eventId, Date date) throws ValueObjectException {
-        User user = new User(this.id, this.name,this.username, this.email,this.phoneNumber, UserStatus.create("suspended"), this.password, this.profilePictureId, emailVerified, numberVerified, createdAt, date);
+        User user = new User(this.id, this.name,this.username, this.email,this.version,this.phoneNumber, UserStatus.create("suspended"), this.password, this.profilePictureId, emailVerified, numberVerified, createdAt, date);
         user.addDomainEvents(SuspendUserEvent.create(eventId,reason,user.id(),date));
         return user;
     }
 
     public User activate(String reason,UUID eventId, Date date) throws ValueObjectException {
-        User user = new User(this.id, this.name,this.username, this.email,this.phoneNumber, UserStatus.create("active"), this.password, this.profilePictureId, emailVerified, numberVerified, createdAt, date);
+        User user = new User(this.id, this.name,this.username, this.email,this.version,this.phoneNumber, UserStatus.create("active"), this.password, this.profilePictureId, emailVerified, numberVerified, createdAt, date);
         user.addDomainEvents(ActivateUserEvent.create(eventId,reason,user.id(),date));
         return user;
     }
 
     public User deactivate(String reason,UUID eventId, Date date) throws ValueObjectException {
-        User user = new User(this.id, this.name,this.username, this.email,this.phoneNumber, UserStatus.create("deactivated"), this.password, this.profilePictureId, emailVerified, numberVerified, createdAt, date);
+        User user = new User(this.id, this.name,this.username, this.email,this.version,this.phoneNumber, UserStatus.create("deactivated"), this.password, this.profilePictureId, emailVerified, numberVerified, createdAt, date);
         user.addDomainEvents(DeactivateUserEvent.create(eventId,reason,user.id(),date));
         return user;
     }
